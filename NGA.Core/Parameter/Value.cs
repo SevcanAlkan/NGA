@@ -4,37 +4,39 @@ using System.Text;
 
 namespace NGA.Core.Parameter
 {
-    /*
-            SYS--------------
-            01 - General
-            02 - ???
-            03 - ??? 
-            04 - ??? 
-            05 - ???      
-           */
+    public static class ParameterValue
+    {
+        /*
+                SYS--------------
+                01 - General
+                02 - ???
+                03 - ??? 
+                04 - ??? 
+                05 - ???      
+               */
 
-    /*
+        /*
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public static string SYS01001 { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string SYS01001 { get; set; }
 
-    */
+        */
 
-    #region Genel
+        #region Genel
 
-    #endregion
+        #endregion
 
-    #region API Features EnableOrDisable
-
-
-    #endregion
-
-    #region AutoCode
+        #region API Features EnableOrDisable
 
 
-    #endregion
+        #endregion
 
+        #region AutoCode
+
+
+        #endregion
+    }
 }
 
