@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using NGA.Core.EntityFramework;
+using NGA.Data.Mapping;
 using NGA.Domain;
 using System;
 using System.Collections.Generic;
@@ -29,17 +30,14 @@ namespace NGA.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             if (modelBuilder == null)
-                throw new ArgumentNullException("modelBuilder");
-            
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                entityType.Relational().TableName = entityType.DisplayName();
-                
-                entityType.GetForeignKeys()
-                    .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade)
-                    .ToList()
-                    .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
-            }
+                throw new ArgumentNullException("modelBuilder");            
+
+            modelBuilder.ApplyConfiguration(new AnimalMap());
+            modelBuilder.ApplyConfiguration(new AnimalTypeMap());
+            modelBuilder.ApplyConfiguration(new NestMap());
+            modelBuilder.ApplyConfiguration(new NestAnimalMap());
+            modelBuilder.ApplyConfiguration(new ParameterMap());
+            modelBuilder.ApplyConfiguration(new UserMap());
 
             base.OnModelCreating(modelBuilder);
         }
@@ -58,10 +56,14 @@ namespace NGA.Data
 
         #region Tables
 
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<Student> Students { get; set; }
+        public DbSet<Animal> Animals { get; set; }
+        public DbSet<AnimalType> AnimalTypes { get; set; }
+        public DbSet<Nest> Nests { get; set; }
+        public DbSet<NestAnimal> NestAnimals { get; set; }
+    
         public DbSet<Parameter> Parameters { get; set; }
+
+        public DbSet<User> Users { get; set; }
 
         #endregion
     }

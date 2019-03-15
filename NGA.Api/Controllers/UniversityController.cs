@@ -10,47 +10,47 @@ using NGA.Domain;
 
 namespace NGA.Api.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/University")]
-    public class UniversityController : Controller
-    {
-        private readonly NGADbContext _context;
+    //[Produces("application/json")]
+    //[Route("api/University")]
+    //public class UniversityController : Controller
+    //{
+    //    private readonly NGADbContext _context;
 
-        public UniversityController(NGADbContext context)
-        {
-            _context = context;
-        }
+    //    public UniversityController(NGADbContext context)
+    //    {
+    //        _context = context;
+    //    }
 
-        // GET: api/University
-        [HttpGet]
-        public Task<List<Student>> Get()
-        {
-            return _context.Students.ToListAsync();
-        }
+    //    // GET: api/University
+    //    [HttpGet]
+    //    public Task<List<Student>> Get()
+    //    {
+    //        return _context.Students.ToListAsync();
+    //    }
 
-        // GET: api/University/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+    //    // GET: api/University/5
+    //    [HttpGet("{id}", Name = "Get")]
+    //    public string Get(int id)
+    //    {
+    //        return "value";
+    //    }
         
-        // POST: api/University
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
+    //    // POST: api/University
+    //    [HttpPost]
+    //    public void Post([FromBody]string value)
+    //    {
+    //    }
         
-        // PUT: api/University/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+    //    // PUT: api/University/5
+    //    [HttpPut("{id}")]
+    //    public void Put(int id, [FromBody]string value)
+    //    {
+    //    }
         
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-    }
+    //    // DELETE: api/ApiWithActions/5
+    //    [HttpDelete("{id}")]
+    //    public void Delete(int id)
+    //    {
+    //    }
+    //}
 }
