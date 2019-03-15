@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NGA.Core.Enum;
 using NGA.Data;
@@ -10,9 +11,10 @@ using NGA.Data;
 namespace NGA.Data.Migrations
 {
     [DbContext(typeof(NGADbContext))]
-    partial class NGADbContextModelSnapshot : ModelSnapshot
+    [Migration("20190315210928_B1-NGA5-R2")]
+    partial class B1NGA5R2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,13 +1,14 @@
-﻿using NGA.Core.EntityFramework;
+﻿using NGA.Core.Enum;
+using NGA.Core.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace NGA.Domain
+namespace NGA.Data.ViewModel
 {
-    public class ParameterBase : Table
+    public class ParameterVM : BaseVM 
     {
         public string Code { get; set; }
         public string Name { get; set; }
@@ -16,9 +17,11 @@ namespace NGA.Domain
         public int OrderIndex { get; set; }
     }
 
-    public class Parameter : ParameterBase
+    public class ParameterAddVM : AddVM
     {
-        #region Foregin Keys
-        #endregion
+    }
+
+    public class ParameterUpdateVM : UpdateVM
+    {
     }
 }
