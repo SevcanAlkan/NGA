@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 namespace NGA.Data.SubStructure
 {
     public interface ICRUDService<A, U, G>
-   where A : AddVM, IAddVM, new()
-   where U : UpdateVM, IUpdateVM, new()
-   where G : BaseVM, IBaseVM, new()
+       where A : AddVM, IAddVM, new()
+       where U : UpdateVM, IUpdateVM, new()
+       where G : BaseVM, IBaseVM, new()
     {
         Task<G> GetByID(Guid id);
         IList<G> GetAll();
@@ -40,7 +40,7 @@ namespace NGA.Data.SubStructure
         IList<G> GetAll(Expression<Func<D, bool>> expr);
     }
 
-    public abstract class BaseService<A, U, G, D> : IBaseService<A, U, G, D>
+    public class BaseService<A, U, G, D> : IBaseService<A, U, G, D>
         where A : AddVM, IAddVM, new()
         where D : Base, IBase, new()
         where U : UpdateVM, IUpdateVM, new()
@@ -72,11 +72,11 @@ namespace NGA.Data.SubStructure
         }
         public virtual IList<G> GetAll()
         {
-            return uow.Repository<D>().Query().ProjectTo<G>().ToList();
+            return uow.Repository<D>().Query().ProjectTo<G>(mapper.ConfigurationProvider).ToList();
         }
         public virtual IList<G> GetAll(Expression<Func<D, bool>> expr)
         {
-            return uow.Repository<D>().Query().Where(expr).ProjectTo<G>().ToList();
+            return uow.Repository<D>().Query().Where(expr).ProjectTo<G>(mapper.ConfigurationProvider).ToList();
         }
 
         public virtual async Task<APIResultVM> Add(A model, Guid? userId = null, bool isCommit = true)
@@ -100,7 +100,7 @@ namespace NGA.Data.SubStructure
                 if (isCommit)
                     await Commit();
 
-                return API.CreateVMWithRec(entity, true, entity.Id);
+                return APIResult.CreateVMWithRec(entity, true, entity.Id);
             }
             catch (Exception e)
             {
@@ -117,7 +117,7 @@ namespace NGA.Data.SubStructure
 
                 D entity = await uow.Repository<D>().GetByID(model.Id);
                 if (Validation.IsNull(entity))
-                    API.CreateVM(false, id, AppStatusCode.WRG01001);
+                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
                 entity = mapper.Map<U, D>(model, entity);
 
@@ -132,7 +132,7 @@ namespace NGA.Data.SubStructure
                 if (isCommit)
                     await Commit();
 
-                return API.CreateVMWithRec(entity, true, entity.Id);
+                return APIResult.CreateVMWithRec(entity, true, entity.Id);
             }
             catch (Exception e)
             {
@@ -147,7 +147,7 @@ namespace NGA.Data.SubStructure
 
                 D entity = await uow.Repository<D>().GetByID(id);
                 if (Validation.IsNull(entity))
-                    API.CreateVM(false, id, AppStatusCode.WRG01001);
+                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
                 if (entity is ITable)
                 {
@@ -161,7 +161,7 @@ namespace NGA.Data.SubStructure
                 if (isCommit)
                     await Commit();
 
-                return API.CreateVMWithRec(entity, true, entity.Id);
+                return APIResult.CreateVMWithRec(entity, true, entity.Id);
             }
             catch (Exception e)
             {
@@ -176,7 +176,7 @@ namespace NGA.Data.SubStructure
 
                 D entity = await uow.Repository<D>().GetByID(id);
                 if (Validation.IsNull(entity))
-                    API.CreateVM(false, id, AppStatusCode.WRG01001);
+                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
                 if (entity is ITable)
                 {
@@ -190,7 +190,7 @@ namespace NGA.Data.SubStructure
                 if (isCommit)
                     await Commit();
 
-                return API.CreateVMWithRec(entity, true, entity.Id);
+                return APIResult.CreateVMWithRec(entity, true, entity.Id);
             }
             catch (Exception e)
             {
@@ -215,7 +215,7 @@ namespace NGA.Data.SubStructure
             {
                 await uow.SaveChanges();
 
-                return API.CreateVM(true);
+                return APIResult.CreateVM(true);
             }
             catch (Exception Ex)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -13,11 +14,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NGA.API.Config;
+using NGA.API.Filter;
 using NGA.Core.EntityFramework;
 using NGA.Core.Model;
 using NGA.Data;
 using NGA.Data.Service;
 using NGA.Data.SubStructure;
+using NGA.Data.ViewModel;
+using NGA.Domain;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace NGA.API
 {
@@ -35,24 +40,73 @@ namespace NGA.API
         {
             services.AddDbContext<NGADbContext>();
 
-            services.AddAutoMapper();
-            Mapper.Initialize(cfg => cfg.AddProfile<AutoMapperConfig>());
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            #region AutoMapper
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperConfig());
+            });
 
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddAutoMapper(typeof(Startup).Assembly);
+            #endregion
+
+            #region MVC Configration
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ValidatorActionFilter));//MVC kendisi attributelara gore zaten validation yapiyor. 
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            #endregion
+
+            #region Dependency Injection 
+           
+            services.AddSingleton(mapper);
             services.AddSingleton<NGADbContext>();
-            //services.AddScoped(typeof(IBaseService<, , , >), typeof(BaseService<, , , >));
+            services.AddSingleton<UnitOfWork>();
+            services.AddSingleton(typeof(IRepository<>), typeof(Repository<>));
 
-            //var assemblyToScan = Assembly.GetAssembly(typeof(AnimalService)); //..or whatever assembly you need
+            services.AddSingleton<IParameterService, ParameterService>();
+            services.AddScoped(typeof(IBaseService<,,,>), typeof(BaseService<,,,>));
 
-            //services.RegisterAssemblyPublicNonGenericClasses(assemblyToScan)
-            //  .Where(c => c.Name.EndsWith("Service"))
-            //  .AsPublicImplementedInterfaces();
 
+            #endregion
+
+            #region Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "NGA",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = "None"
+                    //Contact = new Contact
+                    //{
+                    //    Name = "Shayne Boyer",
+                    //    Email = string.Empty,
+                    //    Url = "https://twitter.com/spboyer"
+                    //},
+                    //License = new License
+                    //{
+                    //    //Name = "Use under LICX",
+                    //    //Url = "https://example.com/license"
+                    //}
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseStaticFiles();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -63,8 +117,21 @@ namespace NGA.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(options =>
+            {
+                options.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "NGA V1");
+            });
+
+            //app.UseHttpsRedirection(); //for diseable SSL
         }
     }
 }

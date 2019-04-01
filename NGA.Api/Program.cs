@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -10,41 +11,40 @@ using Microsoft.Extensions.Logging;
 
 namespace NGA.API
 {
+#pragma warning disable CS1591
     public class Program
     {
         public static void Main(string[] args)
         {
-            var webHost = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                    {
-                        var env = hostingContext.HostingEnvironment;
-                        config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                              .AddJsonFile($"appsettings.{env.EnvironmentName}.json",
-                                  optional: true, reloadOnChange: true);
-                        config.AddEnvironmentVariables();
-                    })
-                .ConfigureLogging((hostingContext, logging) =>
-                    {
-                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                        logging.AddConsole();
-                        logging.AddDebug();
-                        logging.AddEventSourceLogger();
-                    })
-                .UseStartup<Startup>()
+            CreateWebHostBuilder(args).Build().Run();
+        }
+        
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddCommandLine(args)
                 .Build();
 
-            webHost.Run();
-        }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+            return WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(config)
                 .UseStartup<Startup>()
+                .UseKestrel((hostingContext, options) =>
+                {
+                    options.Listen(IPAddress.Loopback, config.GetValue<int>("Host:Port"));
+                    options.AddServerHeader = false;
+                    options.Listen(IPAddress.Loopback, config.GetValue<int>("Host:PortSSL"), listenOptions =>
+                    {
+                        listenOptions.UseHttps();
+                    });
+                })
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
                     logging.AddConsole();
                 });
+        }
     }
+#pragma warning restore CS1591
 }
