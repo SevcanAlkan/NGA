@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NGA.API.Controllers
 {
+    [Route("[controller]/[action]")]
     public class HomeController : Controller
     {
         public IActionResult Index()

@@ -72,11 +72,11 @@ namespace NGA.Data.SubStructure
         }
         public virtual IList<G> GetAll()
         {
-            return uow.Repository<D>().Query().ProjectTo<G>(mapper.ConfigurationProvider).ToList();
+            return uow.Repository<D>().Query().ProjectTo<G>().ToList();
         }
         public virtual IList<G> GetAll(Expression<Func<D, bool>> expr)
         {
-            return uow.Repository<D>().Query().Where(expr).ProjectTo<G>(mapper.ConfigurationProvider).ToList();
+            return uow.Repository<D>().Query().Where(expr).ProjectTo<G>().ToList();
         }
 
         public virtual async Task<APIResultVM> Add(A model, Guid? userId = null, bool isCommit = true)

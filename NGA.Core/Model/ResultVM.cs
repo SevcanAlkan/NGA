@@ -13,7 +13,7 @@ namespace NGA.Core.Model
     public class APIResultVM : IIsResultVM
     {
         public Guid? RecId { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public object Rec { get; set; }
         public bool Result { get; set; }
         public string StatusCode { get; set; }

@@ -34,4 +34,13 @@ namespace NGA.Core.Enum
         Moderator = 2,
         Admin = 3
     }
+
+    public enum HTTPMethodType : byte
+    {
+        Unknown = 1,
+        GET = 2,
+        POST = 3,
+        PUT = 4,
+        DELETE = 5
+    }
 }

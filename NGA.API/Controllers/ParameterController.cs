@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NGA.Core;
 using NGA.Core.Helper;
+using NGA.Core.Model;
 using NGA.Data;
 using NGA.Data.Service;
 using NGA.Data.ViewModel;
@@ -19,19 +20,20 @@ namespace NGA.API.Controllers
         {
 
         }
-
-        /// <summary>
-        /// Deletes a specific TodoItem.
-        /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        public JsonResult getlist()
+        
+        public override Task<JsonResult> Add(ParameterAddVM model)
         {
-            var result = _service.GetAll();
+            return base.Add(null);
+        }
 
-            if (result == null)
-                return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01001));
+        public override Task<JsonResult> Update(Guid id, ParameterUpdateVM model)
+        {
+            return base.Update(Guid.Empty, null);
+        }
 
-            return new JsonResult(result);
+        public override Task<JsonResult> Delete(Guid id)
+        {
+            return base.Delete(Guid.Empty);
         }
     }
 }

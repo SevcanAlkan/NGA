@@ -11,7 +11,6 @@ namespace NGA.Core.Model
     }
     public class BaseVM : IBaseVM
     {
-        [GuidValidation]
         public Guid Id { get; set; }
     }
 
