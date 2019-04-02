@@ -2,11 +2,16 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost:5000",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:17325/",
+      "applicationUrl": "http://localhost:4040",
       "sslPort": 0
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -15,14 +20,17 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "NGA.Api": {
+    "NGA.API": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/parameter/get",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:17324/"
+      "applicationUrl": "http://localhost:5001;https://localhost:5002"
+    },
+    "IIS": {
+      "commandName": "IIS"
     }
   }
 }
