@@ -16,10 +16,25 @@ namespace NGA.API.Config
             CreateMap<Animal, AnimalAddVM>();
             CreateMap<Animal, AnimalUpdateVM>();
 
+            CreateMap<AnimalType, AnimalTypeVM>();
+            CreateMap<AnimalType, AnimalTypeAddVM>();
+            CreateMap<AnimalType, AnimalTypeUpdateVM>();
+
             CreateMap<Parameter, ParameterVM>();
             CreateMap<Parameter, ParameterAddVM>();
             CreateMap<Parameter, ParameterUpdateVM>();
 
+            CreateMap<Nest, NestVM>();
+            CreateMap<Nest, NestAddVM>();
+            CreateMap<Nest, NestUpdateVM>();
+
+            CreateMap<NestAnimal, NestAnimalVM>();
+            CreateMap<NestAnimal, NestAnimalAddVM>();
+            CreateMap<NestAnimal, NestAnimalUpdateVM>();
+
+            CreateMap<User, UserVM>();
+            CreateMap<User, UserAddVM>();
+            CreateMap<User, UserUpdateVM>();
 
         }
     }
