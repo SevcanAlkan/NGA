@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NGA.Core.Enum;
 using NGA.Data;
@@ -10,9 +11,10 @@ using NGA.Data;
 namespace NGA.Data.Migrations
 {
     [DbContext(typeof(NGADbContext))]
-    partial class NGADbContextModelSnapshot : ModelSnapshot
+    [Migration("20190315210514_B1-NGA5")]
+    partial class B1NGA5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +56,7 @@ namespace NGA.Data.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Animal");
+                    b.ToTable("Animals");
                 });
 
             modelBuilder.Entity("NGA.Domain.AnimalType", b =>
@@ -79,7 +81,7 @@ namespace NGA.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AnimalType");
+                    b.ToTable("AnimalTypes");
                 });
 
             modelBuilder.Entity("NGA.Domain.Nest", b =>
@@ -114,7 +116,7 @@ namespace NGA.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Nest");
+                    b.ToTable("Nests");
                 });
 
             modelBuilder.Entity("NGA.Domain.NestAnimal", b =>
@@ -142,7 +144,7 @@ namespace NGA.Data.Migrations
 
                     b.HasIndex("NestId");
 
-                    b.ToTable("NestAnimal");
+                    b.ToTable("NestAnimals");
                 });
 
             modelBuilder.Entity("NGA.Domain.Parameter", b =>
@@ -177,7 +179,7 @@ namespace NGA.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parameter");
+                    b.ToTable("Parameters");
                 });
 
             modelBuilder.Entity("NGA.Domain.User", b =>
@@ -226,7 +228,7 @@ namespace NGA.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("NGA.Domain.Animal", b =>

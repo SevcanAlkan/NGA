@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NGA.Core.Helper
 {
-    public static class API
+    public static class APIResult
     {
         public static APIResultVM CreateVM(bool isSuccessful = false, Guid? recId = null, string statusCode = "")
         {
