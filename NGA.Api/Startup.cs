@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,8 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Converters;
 using NGA.API.Config;
 using NGA.API.Filter;
+using NGA.Core;
 using NGA.Core.EntityFramework;
 using NGA.Core.Model;
 using NGA.Data;
@@ -22,7 +25,6 @@ using NGA.Data.Service;
 using NGA.Data.SubStructure;
 using NGA.Data.ViewModel;
 using NGA.Domain;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace NGA.API
 {
@@ -31,6 +33,10 @@ namespace NGA.API
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            StaticValues.HostAddress = (IPAddress.Loopback.ToString() + ":" + Configuration.GetValue<int>("Host:Port")).ToString();
+            StaticValues.HostSSLAddress = (IPAddress.Loopback.ToString() + ":" + Configuration.GetValue<int>("Host:PortSSL")).ToString();
+            LoadStaticValues.Load();
         }
 
         public IConfiguration Configuration { get; }
@@ -38,12 +44,15 @@ namespace NGA.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<NGADbContext>();
-
             #region AutoMapper
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMapperConfig());
+            });
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperConfig());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
@@ -54,59 +63,40 @@ namespace NGA.API
             services.AddMvc(options =>
             {
                 options.Filters.Add(typeof(ValidatorActionFilter));//MVC kendisi attributelara gore zaten validation yapiyor. 
+                options.Filters.Add(typeof(LoggerFilter));
+            }).AddJsonOptions(options =>
+            {
+                var settings = options.SerializerSettings;
+                options.SerializerSettings.Converters.Add(new StringEnumConverter
+                {
+                    CamelCaseText = true
+                });
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             #endregion
 
             #region Dependency Injection 
            
             services.AddSingleton(mapper);
-            services.AddSingleton<NGADbContext>();
+            services.AddDbContext<NGADbContext>(ServiceLifetime.Transient);
             services.AddSingleton<UnitOfWork>();
             services.AddSingleton(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddSingleton<IParameterService, ParameterService>();
+            services.AddSingleton<IAnimalService, AnimalService>();
+            services.AddSingleton<IAnimalTypeService, AnimalTypeService>();
+            services.AddSingleton<INestService, NestService>();
+            services.AddSingleton<INestAnimalService, NestAnimalService>();
+            services.AddSingleton<IUserService, UserService>();
             services.AddScoped(typeof(IBaseService<,,,>), typeof(BaseService<,,,>));
 
 
             #endregion
-
-            #region Swagger
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "NGA",
-                    Description = "A simple example ASP.NET Core Web API",
-                    TermsOfService = "None"
-                    //Contact = new Contact
-                    //{
-                    //    Name = "Shayne Boyer",
-                    //    Email = string.Empty,
-                    //    Url = "https://twitter.com/spboyer"
-                    //},
-                    //License = new License
-                    //{
-                    //    //Name = "Use under LICX",
-                    //    //Url = "https://example.com/license"
-                    //}
-                });
-
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
-
-
-            #endregion
+                        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseStaticFiles();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -117,20 +107,16 @@ namespace NGA.API
                 app.UseHsts();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseMvc(options =>
             {
-                options.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                options.MapRoute(name: "DefaultApi",
+                template: "api/{controller}/{id?}",
+                defaults: new { controller = "Home", action = "Index" });
             });
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "NGA V1");
-            });
-
+            
             //app.UseHttpsRedirection(); //for diseable SSL
         }
     }

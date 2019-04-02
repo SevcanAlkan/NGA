@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NGA.Core.Helper
 {
@@ -17,7 +18,7 @@ namespace NGA.Core.Helper
             };
             return vm;
         }
-
+        
         public static APIResultVM CreateVMWithRec<T>(T rec, bool isSuccessful = false, Guid? recId = null, string statusCode = "")
         {
             var vm = new APIResultVM()
@@ -27,6 +28,23 @@ namespace NGA.Core.Helper
                 StatusCode = statusCode,
                 Rec = rec,
             };
+
+            return vm;
+        }
+
+        public static async Task<APIResultVM> CreateVMWithRecAsync<T>(T rec, bool isSuccessful = false, Guid? recId = null, string statusCode = "")
+        {
+           
+
+            var vm = new APIResultVM()
+            {
+                Result = isSuccessful,
+                RecId = recId,
+                StatusCode = statusCode,
+                Rec = rec,
+            };
+
+            Task.Delay(1);
 
             return vm;
         }

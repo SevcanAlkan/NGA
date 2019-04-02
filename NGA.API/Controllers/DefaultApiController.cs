@@ -15,7 +15,7 @@ namespace NGA.API.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class DefaultApiController<A, U, G, S> : ControllerBase
+    public abstract class DefaultApiController<A, U, G, S> : ControllerBase
              where A : AddVM, IAddVM, new()
              where U : UpdateVM, IUpdateVM, new()
              where G : BaseVM, IBaseVM, new()
@@ -28,10 +28,9 @@ namespace NGA.API.Controllers
             this._service = service;
         }
 
-        [Route("Get"), HttpGet]
         public virtual JsonResult Get()
         {
-            var result =  _service.GetAll();
+            var result = _service.GetAll();
 
             if (result == null)
                 return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01001));
@@ -39,8 +38,7 @@ namespace NGA.API.Controllers
             return new JsonResult(result);
         }
 
-        [Route("Get"), HttpGet]
-        public virtual async Task<JsonResult> Get(Guid id)
+        public virtual async Task<JsonResult> GetById(Guid id)
         {
             if (Validation.IsNullOrEmpty(id))
                 return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01002));
@@ -53,9 +51,12 @@ namespace NGA.API.Controllers
             return new JsonResult(APIResult.CreateVMWithRec<G>(result, true, result.Id));
         }
 
-        [Route("Add"), HttpPost]
+        [HttpPost]
         public virtual async Task<JsonResult> Add(A model)
         {
+            if (Validation.IsNull(model))
+                APIResult.CreateVM(false, null, AppStatusCode.WRG01001);
+
             var result = await _service.Add(model);
 
             if (Validation.ResultIsNotTrue(result))
@@ -64,9 +65,12 @@ namespace NGA.API.Controllers
             return new JsonResult(APIResult.CreateVM(true, result.RecId));
         }
 
-        [Route("Update"), HttpPut]
+        [HttpPut]
         public virtual async Task<JsonResult> Update(Guid id, U model)
         {
+            if (Validation.IsNull(model))
+                APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
+
             var result = await _service.Update(id, model);
 
             if (Validation.ResultIsNotTrue(result))
@@ -75,9 +79,12 @@ namespace NGA.API.Controllers
             return new JsonResult(APIResult.CreateVM(true, result.RecId));
         }
 
-        [Route("Delete"), HttpDelete]
+        [HttpDelete]
         public virtual async Task<JsonResult> Delete(Guid id)
         {
+            if (id == null || id == Guid.Empty)
+                APIResult.CreateVM(false, null, AppStatusCode.WRG01001);
+
             var result = await _service.Delete(id);
 
             if (Validation.ResultIsNotTrue(result))

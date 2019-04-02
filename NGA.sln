@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.Domain", "NGA.Domain\NG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.Test", "NGA.Test\NGA.Test.csproj", "{F2146849-0EC9-49FB-B263-48C8DB4B7963}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGA.API", "NGA.API\NGA.API.csproj", "{D298C3C1-47A6-4260-BDA7-9AA09D5858C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.API", "NGA.API\NGA.API.csproj", "{D298C3C1-47A6-4260-BDA7-9AA09D5858C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGA.Web", "NGA.Web\NGA.Web.csproj", "{2DAADE06-E07C-4CA4-B664-606DA269EC26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D298C3C1-47A6-4260-BDA7-9AA09D5858C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D298C3C1-47A6-4260-BDA7-9AA09D5858C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D298C3C1-47A6-4260-BDA7-9AA09D5858C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

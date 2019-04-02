@@ -30,6 +30,10 @@ namespace NGA.Core.Parameter
 
         #region API Features EnableOrDisable
 
+        /// <summary>
+        /// Log System 
+        /// </summary>
+        public static bool SYS01001 { get; set; }
 
         #endregion
 

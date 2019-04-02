@@ -16,7 +16,7 @@ namespace NGA.Data
         public NGADbContext() : base()
         {
         }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -62,6 +62,7 @@ namespace NGA.Data
         public DbSet<NestAnimal> NestAnimals { get; set; }
     
         public DbSet<Parameter> Parameters { get; set; }
+        public DbSet<Log> Logs { get; set; }
 
         public DbSet<User> Users { get; set; }
 

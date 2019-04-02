@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NGA.Core.Enum;
 using NGA.Data;
 
 namespace NGA.Data.Migrations
@@ -16,7 +15,7 @@ namespace NGA.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -80,6 +79,38 @@ namespace NGA.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AnimalType");
+                });
+
+            modelBuilder.Entity("NGA.Domain.Log", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ActionName")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ControllerName")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<byte>("MethodType");
+
+                    b.Property<string>("Path")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("RequestBody");
+
+                    b.Property<int>("ResponseTime");
+
+                    b.Property<string>("ReturnTypeName")
+                        .HasMaxLength(250);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("NGA.Domain.Nest", b =>
