@@ -1,4 +1,4 @@
-﻿@model List<NGA.Domain.Log>
+﻿@model List<NGA.Data.ViewModel.LogVM>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Requests Records</h1>
@@ -16,7 +16,7 @@
         <thead>
             <tr>
                 <th hidden>ID</th>
-                <th>Create DateTime</th>
+                <th>Create Date&Time</th>
                 <th>Controller</th>
                 <th>Action</th>
                 <th>Return Type</th>
@@ -29,14 +29,14 @@
 
             @for (int i = 0; i < Model.Count; i++)
             {
-                <tr>
+                <tr @if (Model[i].Errors != null && Model[i].Errors.Count > 0) { <text> style="background-color:darkred; color: white;" </text> }>
                     <td hidden>@Model[i].Id</td>
                     <td>@Model[i].CreateDate</td>
                     <td>@Model[i].ControllerName</td>
                     <td>@Model[i].ActionName</td>
                     <td>@Model[i].ReturnTypeName</td>
 
-                    @switch (@Model[i].MethodType)
+                    @switch (Model[i].MethodType)
                     {
                         case NGA.Core.Enum.HTTPMethodType.Unknown:
                             <td>Unknown</td>
@@ -59,10 +59,10 @@
                     }
 
                     <td>@Model[i].ResponseTime</td>
-                    <td><a href="@Url.Action("APILogDetail", "Home", new { Id= Model[i].Id })" type="button" class="btn btn-sm btn-outline-primary" >Detail</a></td>
+                    <td><a href="@Url.Action("APILogDetail", "Home", new { Id= Model[i].Id })" type="button" class="btn btn-sm btn-outline-primary">Detail</a></td>
 
                 </tr>
-                <tr style="font:italic; font-size:small"><td>@Model[i].Path</td></tr>
+                @*<tr style="font:italic; font-size:small"><td>@Model[i].Path</td></tr>*@
             }
 
         </tbody>

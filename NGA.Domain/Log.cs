@@ -31,9 +31,11 @@ namespace NGA.Domain
     public class Log : LogBase
     {
         //Foreign keys
+        public virtual ICollection<LogError> Errors { get; set; }
 
         public Log()
         {
+            Errors = new HashSet<LogError>();
         }
     }
 }

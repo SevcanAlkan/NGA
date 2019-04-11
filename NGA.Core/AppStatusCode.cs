@@ -30,6 +30,10 @@ namespace NGA.Core
 
         #region ERR
 
+        /// <summary>
+        /// General Error Code
+        /// </summary>
+        public const string ERR01001 = "ERR01001";
 
         #endregion
 
