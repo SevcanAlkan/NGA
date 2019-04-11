@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using NGA.API.Config;
 using NGA.API.Filter;
+using NGA.API.Middleware;
 using NGA.Core;
 using NGA.Core.EntityFramework;
 using NGA.Core.Model;
@@ -97,6 +98,8 @@ namespace NGA.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseMiddleware<AuthMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -116,8 +119,9 @@ namespace NGA.API
                 template: "api/{controller}/{id?}",
                 defaults: new { controller = "Home", action = "Index" });
             });
-            
+
             //app.UseHttpsRedirection(); //for diseable SSL
+
         }
     }
 }

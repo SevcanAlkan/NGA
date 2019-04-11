@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NGA.Core;
 using NGA.Core.Enum;
 using NGA.Data;
+using NGA.Data.Logger;
+using NGA.Data.ViewModel;
 using NGA.Domain;
 using NGA.Web.Models;
 
@@ -21,84 +25,51 @@ namespace NGA.Web.Controllers
 
         public IActionResult APILog()
         {
-            List<Log> logs = new List<Log>();
+            List<LogVM> logs = new List<LogVM>();
 
-            SqlDataReader rdr = null;
-            SqlConnection conn = new SqlConnection(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
-            SqlCommand cmd = new SqlCommand("select * from Logs", conn);
+            logs = LogContext.GetLogs();
 
-            try
-            {
-                conn.Open();
-                rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
-                {
-                    logs.Add(new Log()
-                    {
-                        ActionName = rdr["ActionName"] == null ? "" : (string)rdr["ActionName"],
-                        ControllerName = rdr["ControllerName"] == null ? "" : (string)rdr["ControllerName"],
-                        CreateDate = rdr["CreateDate"] == null ? DateTime.MinValue : (DateTime)rdr["CreateDate"],
-                        Id = rdr["Id"] == null ? Guid.Empty : (Guid)rdr["Id"],
-                        IsDeleted = rdr["IsDeleted"] == null ? false : (Boolean)rdr["IsDeleted"],
-                        MethodType = rdr["MethodType"] == null ? HTTPMethodType.Unknown : (HTTPMethodType)rdr["MethodType"],
-                        Path = rdr["Path"] == null ? "" : (string)rdr["Path"],
-                        RequestBody = rdr["RequestBody"] == null ? "" : (string)rdr["RequestBody"],
-                        ResponseTime = rdr["ResponseTime"] == null ? 0 : (int)rdr["ResponseTime"],
-                        ReturnTypeName = rdr["ReturnTypeName"] == null ? "" : (string)rdr["ReturnTypeName"]
-                    });
-                }
-            }
-            finally
-            {
-                if (rdr != null)
-                    rdr.Close();
-                if (conn != null)
-                    conn.Close();
-            }
-
-            return View(logs);
+            return View(logs.OrderByDescending(o=>o.CreateDate).ToList());
         }
-
         public IActionResult APILogDetail(Guid Id)
         {
             if (Id == null || Id == Guid.Empty)
                 return RedirectToAction("APILog");
 
-            Log rec = new Log();
+            LogVM rec = LogContext.GetLog(Id);
 
-            SqlDataReader rdr = null;
-            SqlConnection conn = new SqlConnection(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
-            SqlCommand cmd = new SqlCommand("select TOP 1 * from Logs where Id = '" + Id.ToString() + "'", conn);
-
-            try
-            {
-                conn.Open();
-                rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
-                {
-                    rec.ActionName = rdr["ActionName"] == null ? "" : (string)rdr["ActionName"];
-                    rec.ControllerName = rdr["ControllerName"] == null ? "" : (string)rdr["ControllerName"];
-                    rec.CreateDate = rdr["CreateDate"] == null ? DateTime.MinValue : (DateTime)rdr["CreateDate"];
-                    rec.Id = rdr["Id"] == null ? Guid.Empty : (Guid)rdr["Id"];
-                    rec.IsDeleted = rdr["IsDeleted"] == null ? false : (Boolean)rdr["IsDeleted"];
-                    rec.MethodType = rdr["MethodType"] == null ? HTTPMethodType.Unknown : (HTTPMethodType)rdr["MethodType"];
-                    rec.Path = rdr["Path"] == null ? "" : (string)rdr["Path"];
-                    rec.RequestBody = rdr["RequestBody"] == null ? "" : (string)rdr["RequestBody"];
-                    rec.ResponseTime = rdr["ResponseTime"] == null ? 0 : (int)rdr["ResponseTime"];
-                    rec.ReturnTypeName = rdr["ReturnTypeName"] == null ? "" : (string)rdr["ReturnTypeName"];
-                }
-            }
-            finally
-            {
-                if (rdr != null)
-                    rdr.Close();
-                if (conn != null)
-                    conn.Close();
-            }
+            if (rec == null)
+                return RedirectToAction("APILog");
 
             return View(rec);
+        }
+
+        public IActionResult APIEndPoint()
+        {
+            List<APIRouteVM> routes = new List<APIRouteVM>();
+            
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ConfigurationManager.AppSetting["APIHost"]+"/");
+                //HTTP GET
+                var responseTask = client.GetAsync("monitor/routes");
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadAsAsync<List<APIRouteVM>>();
+                    readTask.Wait();
+
+                    routes = readTask.Result;
+                }
+                else 
+                {
+                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                }
+            }
+
+            return View(routes.OrderBy(o => o.Controller).ThenBy(n => n.Action).ToList());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -8,6 +8,7 @@ using NGA.Core;
 using NGA.Core.Helper;
 using NGA.Core.Model;
 using NGA.Core.Validation;
+using NGA.Data.Logger;
 using NGA.Data.SubStructure;
 
 namespace NGA.API.Controllers
@@ -30,67 +31,125 @@ namespace NGA.API.Controllers
 
         public virtual JsonResult Get()
         {
-            var result = _service.GetAll();
+            try
+            {
+                var result = _service.GetAll();
 
-            if (result == null)
-                return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01001));
+                if (result == null)
+                    return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01001));
 
-            return new JsonResult(result);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                LogContext.AddError(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), ex);
+                return new JsonResult("");
+            }
         }
 
         public virtual async Task<JsonResult> GetById(Guid id)
         {
-            if (Validation.IsNullOrEmpty(id))
-                return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01002));
+            try
+            {
+                if (Validation.IsNullOrEmpty(id))
+                    return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01002));
 
-            var result = await _service.GetByID(id);
+                var result = await _service.GetByIdAsync(id);
 
-            if (result == null)
-                return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01001));
+                if (result == null)
+                    return new JsonResult(APIResult.CreateVM(false, null, AppStatusCode.WRG01001));
 
-            return new JsonResult(APIResult.CreateVMWithRec<G>(result, true, result.Id));
+                return new JsonResult(APIResult.CreateVMWithRec<G>(result, true, result.Id));
+            }
+            catch (Exception ex)
+            {
+                LogContext.AddError(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), ex);
+                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
+            }
         }
 
         [HttpPost]
         public virtual async Task<JsonResult> Add(A model)
         {
-            if (Validation.IsNull(model))
-                APIResult.CreateVM(false, null, AppStatusCode.WRG01001);
+            APIResultVM result = new APIResultVM();
 
-            var result = await _service.Add(model);
+            try
+            {
+                if (Validation.IsNull(model))
+                    APIResult.CreateVM(false, null, AppStatusCode.WRG01001);
 
-            if (Validation.ResultIsNotTrue(result))
+                result = await _service.Add(model);
+
+                if (Validation.ResultIsNotTrue(result))
+                    return new JsonResult(APIResult.CreateVM(true, result.RecId));
+
                 return new JsonResult(APIResult.CreateVM(true, result.RecId));
-
-            return new JsonResult(APIResult.CreateVM(true, result.RecId));
+            }
+            catch (Exception ex)
+            {
+                result = APIResult.CreateVMWithError(ex, result);
+                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
+            }
+            finally
+            {
+                LogContext.AddErrorRange(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), result.Errors);
+            }
         }
 
         [HttpPut]
         public virtual async Task<JsonResult> Update(Guid id, U model)
         {
-            if (Validation.IsNull(model))
-                APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
+            APIResultVM result = new APIResultVM();
 
-            var result = await _service.Update(id, model);
+            try
+            {
+                if (Validation.IsNull(model))
+                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
-            if (Validation.ResultIsNotTrue(result))
+                result = await _service.Update(id, model);
+
+                if (Validation.ResultIsNotTrue(result))
+                    return new JsonResult(APIResult.CreateVM(true, result.RecId));
+
                 return new JsonResult(APIResult.CreateVM(true, result.RecId));
-
-            return new JsonResult(APIResult.CreateVM(true, result.RecId));
+            }
+            catch (Exception ex)
+            {
+                result = APIResult.CreateVMWithError(ex, result);
+                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
+            }
+            finally
+            {
+                LogContext.AddErrorRange(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), result.Errors);
+            }
         }
 
         [HttpDelete]
         public virtual async Task<JsonResult> Delete(Guid id)
         {
-            if (id == null || id == Guid.Empty)
-                APIResult.CreateVM(false, null, AppStatusCode.WRG01001);
+            APIResultVM result = new APIResultVM();
 
-            var result = await _service.Delete(id);
+            try
+            {
+                if (id == null || id == Guid.Empty)
+                    APIResult.CreateVM(false, null, AppStatusCode.WRG01001);
 
-            if (Validation.ResultIsNotTrue(result))
+                result = await _service.Delete(id);
+
+                if (Validation.ResultIsNotTrue(result))
+                    return new JsonResult(APIResult.CreateVM(true, result.RecId));
+
                 return new JsonResult(APIResult.CreateVM(true, result.RecId));
-
-            return new JsonResult(APIResult.CreateVM(true, result.RecId));
+            }
+            catch (Exception ex)
+            {
+                result = APIResult.CreateVMWithError(ex, result);
+                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
+            }
+            finally
+            {
+                LogContext.AddErrorRange(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), result.Errors);
+            }
         }
     }
 

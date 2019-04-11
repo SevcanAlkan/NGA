@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NGA.Core;
 using NGA.Core.Helper;
 using NGA.Data;
+using NGA.Data.Logger;
 using NGA.Data.Service;
 using NGA.Data.ViewModel;
 using NGA.Domain;

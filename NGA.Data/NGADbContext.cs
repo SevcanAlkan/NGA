@@ -63,6 +63,7 @@ namespace NGA.Data
     
         public DbSet<Parameter> Parameters { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<LogError> LogErrors { get; set; }
 
         public DbSet<User> Users { get; set; }
 

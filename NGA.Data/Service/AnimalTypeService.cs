@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using NGA.Core.Helper;
+using NGA.Core.Model;
 using NGA.Data.SubStructure;
 using NGA.Data.ViewModel;
 using NGA.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NGA.Data.Service
 {
@@ -22,11 +25,11 @@ namespace NGA.Data.Service
 
         #region Methods                
 
+        
         #endregion
     }
 
     public interface IAnimalTypeService : IBaseService<AnimalTypeAddVM, AnimalTypeUpdateVM, AnimalTypeVM, AnimalType>
     {
-
     }
 }

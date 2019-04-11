@@ -19,7 +19,7 @@ namespace NGA.Data.SubStructure
        where U : UpdateVM, IUpdateVM, new()
        where G : BaseVM, IBaseVM, new()
     {
-        Task<G> GetByID(Guid id);
+        Task<G> GetByIdAsync(Guid id);
         IList<G> GetAll();
 
         Task<APIResultVM> Add(A model, Guid? userId = null, bool isCommit = true);
@@ -63,20 +63,62 @@ namespace NGA.Data.SubStructure
             }
         }
 
-        public virtual async Task<G> GetByID(Guid id)
+        public virtual async Task<G> GetByIdAsync(Guid id)
         {
-            if (Validation.IsNullOrEmpty(id))
-                return null;
+            try
+            {
+                if (Validation.IsNullOrEmpty(id))
+                    return null;
 
-            return Mapper.Map<G>(await uow.Repository<D>().GetByID(id));
+                return Mapper.Map<G>(await uow.Repository<D>().GetByID(id));
+            }
+            catch (Exception e)
+            {
+                APIResult.CreateVMWithError(e);
+                return null;
+            }
+        }
+        public virtual G GetById(Guid id)
+        {
+            try
+            {
+                D dm = uow.Repository<D>().Query().Where(x => x.Id == id).FirstOrDefault();
+                if (Validation.IsNull(dm))
+                    return null;
+
+                G vm = mapper.Map<D, G>(dm);
+
+                return vm;
+            }
+            catch (Exception e)
+            {
+                APIResult.CreateVMWithError(e);
+                return null;
+            }
         }
         public virtual IList<G> GetAll()
         {
-            return uow.Repository<D>().Query().ProjectTo<G>().ToList();
+            try
+            {
+                return uow.Repository<D>().Query().ProjectTo<G>().ToList();
+            }
+            catch (Exception e)
+            {
+                APIResult.CreateVMWithError(e);
+                return null;
+            }
         }
         public virtual IList<G> GetAll(Expression<Func<D, bool>> expr)
         {
-            return uow.Repository<D>().Query().Where(expr).ProjectTo<G>().ToList();
+            try
+            {
+                return uow.Repository<D>().Query().Where(expr).ProjectTo<G>().ToList();
+            }
+            catch (Exception e)
+            {
+                APIResult.CreateVMWithError(e);
+                return null;
+            }
         }
 
         public virtual async Task<APIResultVM> Add(A model, Guid? userId = null, bool isCommit = true)
@@ -93,7 +135,7 @@ namespace NGA.Data.SubStructure
                 {
                     (entity as ITable).CreateBy = _userId;
                     (entity as ITable).CreateDT = DateTime.Now;
-                }                
+                }
 
                 uow.Repository<D>().Add(entity);
 
@@ -104,7 +146,7 @@ namespace NGA.Data.SubStructure
             }
             catch (Exception e)
             {
-                throw e;
+                return APIResult.CreateVMWithError(e);
             }
         }
         public virtual async Task<APIResultVM> Update(Guid id, U model, Guid? userId = null, bool isCommit = true)
@@ -136,7 +178,7 @@ namespace NGA.Data.SubStructure
             }
             catch (Exception e)
             {
-                throw e;
+                return APIResult.CreateVMWithError(e);
             }
         }
         public virtual async Task<APIResultVM> Delete(Guid id, Guid? userId = null, bool isCommit = true)
@@ -165,7 +207,7 @@ namespace NGA.Data.SubStructure
             }
             catch (Exception e)
             {
-                throw e;
+                return APIResult.CreateVMWithError(e);
             }
         }
         public virtual async Task<APIResultVM> ReverseDelete(Guid id, Guid? userId, bool isCommit = true)
@@ -194,21 +236,10 @@ namespace NGA.Data.SubStructure
             }
             catch (Exception e)
             {
-                throw e;
+                return APIResult.CreateVMWithError(e);
             }
         }
-
-        public virtual G GetById(Guid id)
-        {
-            D dm = uow.Repository<D>().Query().Where(x => x.Id == id).FirstOrDefault();
-            if (Validation.IsNull(dm))
-                return null;
-
-            G vm = mapper.Map<D, G>(dm);
-
-            return vm;
-        }
-
+        
         public virtual async Task<APIResultVM> Commit()
         {
             try
@@ -217,9 +248,9 @@ namespace NGA.Data.SubStructure
 
                 return APIResult.CreateVM(true);
             }
-            catch (Exception Ex)
+            catch (Exception e)
             {
-                throw Ex;
+                return APIResult.CreateVMWithError(e);
             }
         }
     }
