@@ -18,6 +18,7 @@ using Newtonsoft.Json.Converters;
 using NGA.API.Config;
 using NGA.API.Filter;
 using NGA.API.Middleware;
+using NGA.API.SignalR;
 using NGA.Core;
 using NGA.Core.EntityFramework;
 using NGA.Core.Model;
@@ -26,6 +27,7 @@ using NGA.Data.Service;
 using NGA.Data.SubStructure;
 using NGA.Data.ViewModel;
 using NGA.Domain;
+using StackExchange.Redis;
 
 namespace NGA.API
 {
@@ -45,20 +47,12 @@ namespace NGA.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            #region AutoMapper
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMapperConfig());
-            });
-
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile(new AutoMapperConfig());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddAutoMapper(typeof(Startup).Assembly);
-            #endregion
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+            builder => builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                 ));
 
             #region MVC Configration
             services.AddMvc(options =>
@@ -75,8 +69,23 @@ namespace NGA.API
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             #endregion
 
+            #region AutoMapper
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperConfig());
+            });
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperConfig());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddAutoMapper(typeof(Startup).Assembly);
+            #endregion
+
             #region Dependency Injection 
-           
+
             services.AddSingleton(mapper);
             services.AddDbContext<NGADbContext>(ServiceLifetime.Transient);
             services.AddSingleton<UnitOfWork>();
@@ -90,9 +99,12 @@ namespace NGA.API
             services.AddSingleton<IUserService, UserService>();
             services.AddScoped(typeof(IBaseService<,,,>), typeof(BaseService<,,,>));
 
+            services.AddSingleton<ChatHub>();
 
             #endregion
-                        
+
+            services.AddSignalR();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -112,6 +124,14 @@ namespace NGA.API
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            //app.UseHttpsRedirection(); //for diseable SSL
+
+            app.UseCors("CorsPolicy");
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatHub");
+            });
 
             app.UseMvc(options =>
             {
@@ -119,9 +139,6 @@ namespace NGA.API
                 template: "api/{controller}/{id?}",
                 defaults: new { controller = "Home", action = "Index" });
             });
-
-            //app.UseHttpsRedirection(); //for diseable SSL
-
         }
     }
 }
