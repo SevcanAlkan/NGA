@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.Core", "NGA.Core\NGA.Core.csproj", "{B4E93A26-BB21-4617-A2AA-A01A5FD7E5C8}"
 EndProject
@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.Test", "NGA.Test\NGA.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.API", "NGA.API\NGA.API.csproj", "{D298C3C1-47A6-4260-BDA7-9AA09D5858C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGA.Web", "NGA.Web\NGA.Web.csproj", "{2DAADE06-E07C-4CA4-B664-606DA269EC26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGA.Web", "NGA.Web\NGA.Web.csproj", "{2DAADE06-E07C-4CA4-B664-606DA269EC26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGA.RabbitMQLogger", "NGA.RabbitMQLogger\NGA.RabbitMQLogger.csproj", "{F31A69FB-C816-4E7B-9B8B-AF91648BB42C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DAADE06-E07C-4CA4-B664-606DA269EC26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F31A69FB-C816-4E7B-9B8B-AF91648BB42C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F31A69FB-C816-4E7B-9B8B-AF91648BB42C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F31A69FB-C816-4E7B-9B8B-AF91648BB42C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F31A69FB-C816-4E7B-9B8B-AF91648BB42C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
