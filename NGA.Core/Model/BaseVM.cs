@@ -29,17 +29,17 @@ namespace NGA.Core.Model
         public Guid UpdateBy { get; set; }
     }
 
-    public interface IAddVM : IBaseVM
+    public interface IAddVM 
     {
     }
-    public class AddVM : BaseVM, IAddVM
+    public class AddVM : IAddVM
     {
     }
 
-    public interface IUpdateVM : IBaseVM
+    public interface IUpdateVM
     {
     }
-    public class UpdateVM : BaseVM, IUpdateVM
+    public class UpdateVM : IUpdateVM
     {
     }
 }

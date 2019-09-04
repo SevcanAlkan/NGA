@@ -42,8 +42,7 @@ namespace NGA.API.Controllers
             }
             catch (Exception ex)
             {
-                LogContext.AddError(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), ex);
-                return new JsonResult("");
+                return new JsonResult(APIResult.CreateVMWithError(ex, APIResult.CreateVM(false, null, AppStatusCode.ERR01001)));
             }
         }
 
@@ -63,8 +62,7 @@ namespace NGA.API.Controllers
             }
             catch (Exception ex)
             {
-                LogContext.AddError(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), ex);
-                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
+                return new JsonResult(APIResult.CreateVMWithError(ex, APIResult.CreateVM(false, null, AppStatusCode.ERR01001)));
             }
         }
 
@@ -81,18 +79,13 @@ namespace NGA.API.Controllers
                 result = await _service.Add(model);
 
                 if (Validation.ResultIsNotTrue(result))
-                    return new JsonResult(APIResult.CreateVM(true, result.RecId));
+                    return new JsonResult(result);
 
                 return new JsonResult(APIResult.CreateVM(true, result.RecId));
             }
             catch (Exception ex)
             {
-                result = APIResult.CreateVMWithError(ex, result);
-                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
-            }
-            finally
-            {
-                LogContext.AddErrorRange(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), result.Errors);
+                return new JsonResult(APIResult.CreateVMWithError(ex, APIResult.CreateVM(false, result.RecId)));
             }
         }
 
@@ -109,18 +102,13 @@ namespace NGA.API.Controllers
                 result = await _service.Update(id, model);
 
                 if (Validation.ResultIsNotTrue(result))
-                    return new JsonResult(APIResult.CreateVM(true, result.RecId));
+                    return new JsonResult(result);
 
                 return new JsonResult(APIResult.CreateVM(true, result.RecId));
             }
             catch (Exception ex)
             {
-                result = APIResult.CreateVMWithError(ex, result);
-                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
-            }
-            finally
-            {
-                LogContext.AddErrorRange(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), result.Errors);
+                return new JsonResult(APIResult.CreateVMWithError(ex, APIResult.CreateVM(false, result.RecId)));
             }
         }
 
@@ -137,18 +125,13 @@ namespace NGA.API.Controllers
                 result = await _service.Delete(id);
 
                 if (Validation.ResultIsNotTrue(result))
-                    return new JsonResult(APIResult.CreateVM(true, result.RecId));
+                    return new JsonResult(result);
 
                 return new JsonResult(APIResult.CreateVM(true, result.RecId));
             }
             catch (Exception ex)
             {
-                result = APIResult.CreateVMWithError(ex, result);
-                return new JsonResult(APIResult.CreateVM(statusCode: AppStatusCode.ERR01001));
-            }
-            finally
-            {
-                LogContext.AddErrorRange(HttpContext.Response.Headers["RequestID"].FirstOrDefault(), result.Errors);
+                return new JsonResult(APIResult.CreateVMWithError(ex, APIResult.CreateVM(false, result.RecId)));
             }
         }
     }

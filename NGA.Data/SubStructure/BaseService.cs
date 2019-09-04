@@ -125,11 +125,11 @@ namespace NGA.Data.SubStructure
         {
             try
             {
-                Guid _userId = userId == null ? Guid.Empty : userId.Value;
-                if (model.Id == null || model.Id == Guid.Empty)
-                    model.Id = Guid.NewGuid();
+                Guid _userId = userId == null ? Guid.Empty : userId.Value;                
 
                 D entity = mapper.Map<A, D>(model);
+                if (entity.Id == null || entity.Id == Guid.Empty)
+                    entity.Id = Guid.NewGuid();
 
                 if (entity is ITable)
                 {
@@ -154,12 +154,10 @@ namespace NGA.Data.SubStructure
             try
             {
                 Guid _userId = userId == null ? Guid.Empty : userId.Value;
-                if (model.Id == null || model.Id == Guid.Empty)
-                    model.Id = Guid.NewGuid();
 
-                D entity = await uow.Repository<D>().GetByID(model.Id);
+                D entity = await uow.Repository<D>().GetByID(id);
                 if (Validation.IsNull(entity))
-                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
+                    return APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
                 entity = mapper.Map<U, D>(model, entity);
 
@@ -189,7 +187,7 @@ namespace NGA.Data.SubStructure
 
                 D entity = await uow.Repository<D>().GetByID(id);
                 if (Validation.IsNull(entity))
-                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
+                    return APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
                 if (entity is ITable)
                 {
@@ -218,7 +216,7 @@ namespace NGA.Data.SubStructure
 
                 D entity = await uow.Repository<D>().GetByID(id);
                 if (Validation.IsNull(entity))
-                    APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
+                    return APIResult.CreateVM(false, id, AppStatusCode.WRG01001);
 
                 if (entity is ITable)
                 {
@@ -239,7 +237,7 @@ namespace NGA.Data.SubStructure
                 return APIResult.CreateVMWithError(e);
             }
         }
-        
+
         public virtual async Task<APIResultVM> Commit()
         {
             try
