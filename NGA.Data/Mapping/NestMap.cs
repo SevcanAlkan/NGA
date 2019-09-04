@@ -16,7 +16,7 @@ namespace NGA.Data.Mapping
             builder.ToTable("Nest");
 
             builder.Property(c => c.Name).HasMaxLength(100);            
-            builder.Property(c=>c.Status).HasDefaultValue(NestStatus.NoInfo).IsRequired();
+            builder.Property(c=> c.Status).HasDefaultValue(NestStatus.NoInfo).IsRequired();
            
         }
     }

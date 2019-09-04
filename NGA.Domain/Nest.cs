@@ -13,8 +13,8 @@ namespace NGA.Domain
         public DateTime? LastRepaireDate { get; set; }
         public DateTime? LastCheckDate { get; set; }
 
-        public int XCordinate { get; set; }
-        public int YCordinate { get; set; }
+        public double XCordinate { get; set; }
+        public double YCordinate { get; set; }
     }
 
     public class Nest : NestBase

@@ -15,8 +15,8 @@ namespace NGA.Data.ViewModel
         public DateTime? LastRepaireDate { get; set; }
         public DateTime? LastCheckDate { get; set; }
 
-        public int XCordinate { get; set; }
-        public int YCordinate { get; set; }
+        public double XCordinate { get; set; }
+        public double YCordinate { get; set; }
     }
 
     public class NestAddVM : AddVM
@@ -28,10 +28,10 @@ namespace NGA.Data.ViewModel
         public DateTime? LastRepaireDate { get; set; }
         public DateTime? LastCheckDate { get; set; }
 
-        [Required, Range(int.MinValue, int.MaxValue)]
-        public int XCordinate { get; set; }
-        [Required, Range(int.MinValue, int.MaxValue)]
-        public int YCordinate { get; set; }
+        [Required, Range(double.MinValue, double.MaxValue)]
+        public double XCordinate { get; set; }
+        [Required, Range(double.MinValue, double.MaxValue)]
+        public double YCordinate { get; set; }
     }
 
     public class NestUpdateVM : UpdateVM
@@ -43,9 +43,9 @@ namespace NGA.Data.ViewModel
         public DateTime? LastRepaireDate { get; set; }
         public DateTime? LastCheckDate { get; set; }
 
-        [Required, Range(int.MinValue, int.MaxValue)]
-        public int XCordinate { get; set; }
-        [Required, Range(int.MinValue, int.MaxValue)]
-        public int YCordinate { get; set; }
+        [Required, Range(double.MinValue, double.MaxValue)]
+        public double XCordinate { get; set; }
+        [Required, Range(double.MinValue, double.MaxValue)]
+        public double YCordinate { get; set; }
     }
 }
